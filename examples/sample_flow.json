@@ -1,42 +1,76 @@
 {
   "nodes": [
     {
-      "id": "node1",
+      "id": "input_node",
       "data": {
-        "label": "InputProcessor"
+        "label": "TextInput"
       },
       "class_path": "langflow.CustomPythonFunction",
       "inputs": {
-        "code": "def process_input(state):\n    # Process the input\n    if \"input\" in state:\n        state[\"processed_input\"] = state[\"input\"].upper()\n    return state"
+        "code": "def process_input(state):\n    if \"input\" in state:\n        state[\"processed_text\"] = state[\"input\"].strip().lower()\n    return state"
       }
     },
     {
-      "id": "node2",
+      "id": "llm_node",
       "data": {
-        "label": "LLMNode"
+        "label": "LLMProcessor",
+        "temperature": 0.7,
+        "max_tokens": 150
       },
       "class_path": "langflow.LLMNode",
-      "inputs": {}
+      "inputs": {
+        "prompt_template": "Summarize the following text: {processed_text}"
+      }
     },
     {
-      "id": "node3",
+      "id": "format_node",
       "data": {
         "label": "OutputFormatter"
       },
       "class_path": "langflow.CustomPythonFunction",
       "inputs": {
-        "code": "def format_output(state):\n    # Format the output\n    if \"llm_response\" in state:\n        state[\"output\"] = f\"Result: {state['llm_response']}\"\n    return state"
+        "code": "def format_output(state):\n    if \"llm_response\" in state:\n        state[\"final_output\"] = {\n            \"summary\": state[\"llm_response\"],\n            \"timestamp\": state.get(\"timestamp\", \"\")\n        }\n    return state"
+      }
+    },
+    {
+      "id": "validation_node",
+      "data": {
+        "label": "ResponseValidator"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def validate_response(state):\n    if \"final_output\" not in state:\n        state[\"error\"] = \"Missing final output\"\n        return state\n    if not isinstance(state[\"final_output\"], dict):\n        state[\"error\"] = \"Invalid output format\"\n    return state"
       }
     }
   ],
   "edges": [
     {
-      "source": "node1",
-      "target": "node2"
+      "source": "input_node",
+      "target": "llm_node",
+      "data": {
+        "label": "Text Flow"
+      }
     },
     {
-      "source": "node2",
-      "target": "node3"
+      "source": "llm_node",
+      "target": "format_node",
+      "data": {
+        "label": "LLM Response"
+      }
+    },
+    {
+      "source": "format_node",
+      "target": "validation_node",
+      "data": {
+        "label": "Validation"
+      }
     }
-  ]
+  ],
+  "metadata": {
+    "name": "Text Processing Flow",
+    "description": "A simple flow that processes text input, generates a summary using an LLM, formats the output, and validates the response.",
+    "version": "1.0.0",
+    "created_at": "2024-01-20T10:00:00Z",
+    "updated_at": "2024-01-20T10:00:00Z"
+  }
 }
