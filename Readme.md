@@ -9,6 +9,10 @@ Convert LangFlow JSON exports into fully structured, production-ready LangGraph 
 - Reconstructs node functions, edge connections, and flow logic
 - Extracts custom Python code blocks
 - Sets LangGraph entry and finish points
+- Supports conditional routing and loop constructs
+- Generates proper state management code
+- Validates and fixes generated code
+- Supports a wide range of node types
 - Easy to run in a virtual environment or via CLI
 
 ---
@@ -112,7 +116,7 @@ This project is developed and maintained by **[PatRec UG](https://patrec.eu)** �
 - **Company GPTs & Agents**: Automate decisions and documents with local vector storage
 - **RISK.AI**: Manage market, credit, and operational risk with AI-enhanced tools
 
-> “We got an ROI of x10 from the Demand.AI Forecasting Model PatRec developed.”  
+> “We got an ROI of x10 from the Demand.AI Forecasting Model PatRec developed.”
 > — SCM Lead, Henkel AG
 
 - 🌍 Website: [patrec.eu](https://patrec.eu)

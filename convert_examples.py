@@ -10,21 +10,28 @@ def main():
     if not os.path.exists("examples"):
         os.makedirs("examples")
 
+    # Skip conversion if files already exist
     # Convert loop flow
     loop_input = "examples/loop_flow.json"
     loop_output = "generated_loop_graph.py"
 
-    print(f"Converting loop flow: {loop_input} -> {loop_output}")
-    loop_code = convert_langflow_to_langgraph(loop_input, loop_output, validate=True)
-    print(f"Successfully converted loop flow")
+    if not os.path.exists(loop_output):
+        print(f"Converting loop flow: {loop_input} -> {loop_output}")
+        loop_code = convert_langflow_to_langgraph(loop_input, loop_output, validate=True)
+        print(f"Successfully converted loop flow")
+    else:
+        print(f"Skipping conversion of loop flow - {loop_output} already exists")
 
     # Convert conditional flow
     cond_input = "examples/conditional_flow.json"
     cond_output = "generated_conditional_graph.py"
 
-    print(f"Converting conditional flow: {cond_input} -> {cond_output}")
-    cond_code = convert_langflow_to_langgraph(cond_input, cond_output, validate=True)
-    print(f"Successfully converted conditional flow")
+    if not os.path.exists(cond_output):
+        print(f"Converting conditional flow: {cond_input} -> {cond_output}")
+        cond_code = convert_langflow_to_langgraph(cond_input, cond_output, validate=True)
+        print(f"Successfully converted conditional flow")
+    else:
+        print(f"Skipping conversion of conditional flow - {cond_output} already exists")
 
     # Run tests
     print("\nRunning tests...")

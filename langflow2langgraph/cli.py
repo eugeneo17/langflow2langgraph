@@ -23,10 +23,10 @@ from langflow2langgraph.converter import convert_langflow_to_langgraph
 def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
     """
     Parse command line arguments.
-    
+
     Args:
         args: Command line arguments (defaults to sys.argv[1:])
-        
+
     Returns:
         Parsed arguments
     """
@@ -34,54 +34,61 @@ def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:
         description="Convert LangFlow JSON exports to LangGraph Python code",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    
+
     parser.add_argument(
         "input_file",
         help="Path to the LangFlow JSON file"
     )
-    
+
     parser.add_argument(
         "--output", "-o",
         help="Path to save the generated Python code (if not provided, prints to stdout)"
     )
-    
+
     parser.add_argument(
         "--preview", "-p",
         action="store_true",
         help="Preview the generated code without saving"
     )
-    
+
+    parser.add_argument(
+        "--no-validate", "-n",
+        action="store_true",
+        help="Skip validation and automatic fixing of the generated code"
+    )
+
     return parser.parse_args(args)
 
 
 def main(args: Optional[List[str]] = None) -> int:
     """
     Main entry point for the CLI.
-    
+
     Args:
         args: Command line arguments (defaults to sys.argv[1:])
-        
+
     Returns:
         Exit code (0 for success, non-zero for failure)
     """
     console = Console()
-    
+
     try:
         parsed_args = parse_args(args)
-        
+
         # Check if input file exists
         if not os.path.isfile(parsed_args.input_file):
             console.print(f"[bold red]Error:[/] Input file '{parsed_args.input_file}' not found")
             return 1
-        
+
         # Convert the file
         console.print(f"Converting [bold cyan]{parsed_args.input_file}[/]...")
-        
+
         generated_code = convert_langflow_to_langgraph(
             parsed_args.input_file,
-            None if parsed_args.preview else parsed_args.output
+            None if parsed_args.preview else parsed_args.output,
+            validate=not parsed_args.no_validate
         )
-        
+
         # Handle output
         if parsed_args.preview or not parsed_args.output:
             # Print the generated code with syntax highlighting
@@ -97,14 +104,14 @@ def main(args: Optional[List[str]] = None) -> int:
                 title="Generated LangGraph Code",
                 expand=False
             ))
-            
+
             if not parsed_args.output:
                 console.print("[yellow]Note:[/] No output file specified. Use --output to save the code.")
         else:
             console.print(f"[bold green]Success![/] Generated code saved to [bold cyan]{parsed_args.output}[/]")
-        
+
         return 0
-        
+
     except Exception as e:
         console.print(f"[bold red]Error:[/] {str(e)}")
         return 1
