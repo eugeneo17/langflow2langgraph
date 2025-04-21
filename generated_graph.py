@@ -14,34 +14,45 @@ def create_graph():
 
     # --- Node Functions ---
     def process_input(state):
-            # Process the input
             if "input" in state:
-                state["processed_input"] = state["input"].upper()
+                state["processed_text"] = state["input"].strip().lower()
             return state
-    graph.add_node("inputprocessor", process_input)
+    graph.add_node("textinput", process_input)
 
-    def llmnode(state):
+    def llmprocessor(state):
         # TODO: implement logic from class langflow.LLMNode
         # For testing purposes, add a mock LLM response
         if "processed_input" in state:
             state["llm_response"] = f"Processed: {state['processed_input']}"
         return state
-    graph.add_node("llmnode", llmnode)
+    graph.add_node("llmprocessor", llmprocessor)
 
     def format_output(state):
-            # Format the output
             if "llm_response" in state:
-                state["output"] = f"Result: {state['llm_response']}"
+                state["final_output"] = {
+                    "summary": state["llm_response"],
+                    "timestamp": state.get("timestamp", "")
+                }
             return state
     graph.add_node("outputformatter", format_output)
 
+    def validate_response(state):
+            if "final_output" not in state:
+                state["error"] = "Missing final output"
+                return state
+            if not isinstance(state["final_output"], dict):
+                state["error"] = "Invalid output format"
+            return state
+    graph.add_node("responsevalidator", validate_response)
+
     # --- Edges ---
-    graph.add_edge("inputprocessor", "llmnode")
-    graph.add_edge("llmnode", "outputformatter")
+    graph.add_edge("textinput", "llmprocessor")
+    graph.add_edge("llmprocessor", "outputformatter")
+    graph.add_edge("outputformatter", "responsevalidator")
 
     # --- Entry and Finish ---
-    graph.set_entry_point("inputprocessor")
-    graph.set_finish_point("outputformatter")
+    graph.set_entry_point("textinput")
+    graph.set_finish_point("responsevalidator")
 
     return graph.compile()
 
