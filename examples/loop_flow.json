@@ -1,0 +1,98 @@
+{
+  "nodes": [
+    {
+      "id": "input_node",
+      "data": {
+        "label": "InputProcessor"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def process_input(state):\n    if \"input\" in state:\n        state[\"items\"] = state[\"input\"].split(\",\")\n        state[\"current_index\"] = 0\n        state[\"results\"] = []\n    return state"
+      }
+    },
+    {
+      "id": "loop_controller",
+      "data": {
+        "label": "LoopController"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def check_loop_condition(state):\n    if \"items\" in state and \"current_index\" in state:\n        if state[\"current_index\"] < len(state[\"items\"]):\n            return {\"decision\": \"continue_loop\"}\n        else:\n            return {\"decision\": \"exit_loop\"}\n    return {\"decision\": \"exit_loop\"}"
+      }
+    },
+    {
+      "id": "process_item",
+      "data": {
+        "label": "ItemProcessor"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {
+        "prompt_template": "Process this item: {items[current_index]}"
+      }
+    },
+    {
+      "id": "update_loop",
+      "data": {
+        "label": "LoopUpdater"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def update_loop_state(state):\n    if \"llm_response\" in state and \"current_index\" in state and \"results\" in state:\n        state[\"results\"].append(state[\"llm_response\"])\n        state[\"current_index\"] += 1\n    return state"
+      }
+    },
+    {
+      "id": "format_output",
+      "data": {
+        "label": "OutputFormatter"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def format_results(state):\n    if \"results\" in state:\n        state[\"output\"] = {\"processed_items\": state[\"results\"]}\n    return state"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "loop_controller",
+      "data": {
+        "label": "Initialize"
+      }
+    },
+    {
+      "source": "loop_controller",
+      "target": "process_item",
+      "data": {
+        "label": "Continue Loop",
+        "condition": "decision == 'continue_loop'"
+      }
+    },
+    {
+      "source": "loop_controller",
+      "target": "format_output",
+      "data": {
+        "label": "Exit Loop",
+        "condition": "decision == 'exit_loop'"
+      }
+    },
+    {
+      "source": "process_item",
+      "target": "update_loop",
+      "data": {
+        "label": "Process Item"
+      }
+    },
+    {
+      "source": "update_loop",
+      "target": "loop_controller",
+      "data": {
+        "label": "Next Iteration"
+      }
+    }
+  ],
+  "metadata": {
+    "name": "Loop Processing Flow",
+    "description": "A flow that processes a list of items in a loop",
+    "version": "1.0.0"
+  }
+}
