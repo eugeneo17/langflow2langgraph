@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langflow2langgraph"
+version = "0.1.0"
+description = "Convert LangFlow JSON exports into LangGraph Python code"
+authors = [
+    {name = "Neuronaut", email = "neuronaut73@users.noreply.github.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "langchain>=0.1.0",
+    "rich",
+]
+
+[project.optional-dependencies]
+openai = ["openai"]
+
+[project.scripts]
+lf2lg = "langflow2langgraph.cli:main"
+
+[project.urls]
+"Homepage" = "https://github.com/neuronaut73/langflow2langgraph"
+"Bug Tracker" = "https://github.com/neuronaut73/langflow2langgraph/issues"

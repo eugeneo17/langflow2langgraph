@@ -1,0 +1,42 @@
+{
+  "nodes": [
+    {
+      "id": "node1",
+      "data": {
+        "label": "InputProcessor"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def process_input(state):\n    # Process the input\n    if \"input\" in state:\n        state[\"processed_input\"] = state[\"input\"].upper()\n    return state"
+      }
+    },
+    {
+      "id": "node2",
+      "data": {
+        "label": "LLMNode"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {}
+    },
+    {
+      "id": "node3",
+      "data": {
+        "label": "OutputFormatter"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def format_output(state):\n    # Format the output\n    if \"llm_response\" in state:\n        state[\"output\"] = f\"Result: {state['llm_response']}\"\n    return state"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node1",
+      "target": "node2"
+    },
+    {
+      "source": "node2",
+      "target": "node3"
+    }
+  ]
+}
