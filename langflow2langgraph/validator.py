@@ -273,7 +273,16 @@ def fix_common_issues(code: str) -> str:
                         continue
 
                     # Add proper indentation to all lines
-                    fixed_code.append(f'        {line.strip()}')
+                    # Check if this is a line that needs indentation
+                    if line.strip().startswith('if ') or line.strip().startswith('for ') or line.strip().startswith('while ') or line.strip().startswith('try:'):
+                        # Control statement - no extra indentation needed
+                        fixed_code.append(f'        {line.strip()}')
+                    elif i > 0 and clean_func_lines[i-1].strip().endswith(':'):
+                        # This line follows a control statement and needs indentation
+                        fixed_code.append(f'            {line.strip()}')
+                    else:
+                        # Regular line
+                        fixed_code.append(f'        {line.strip()}')
         else:
             # For regular functions, use the existing approach
             fixed_code.append(f'    def {func_name}(state):')
@@ -330,7 +339,17 @@ def fix_common_issues(code: str) -> str:
                         fixed_code.append(f'        {line}')
                     else:
                         # Regular line - use current indentation
-                        fixed_code.append(f'        {"    " * current_indent}{line}')
+                        # Check if this line follows a control statement
+                        prev_line_idx = i - 1
+                        while prev_line_idx >= start_idx and not clean_func_lines[prev_line_idx].strip():
+                            prev_line_idx -= 1
+
+                        if prev_line_idx >= start_idx and clean_func_lines[prev_line_idx].strip().endswith(':'):
+                            # This line follows a control statement and needs indentation
+                            fixed_code.append(f'            {line}')
+                        else:
+                            # Regular indentation
+                            fixed_code.append(f'        {"    " * current_indent}{line}')
 
             # If no content, add a placeholder
             if not has_content:

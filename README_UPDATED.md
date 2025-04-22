@@ -1,8 +1,6 @@
-# LangFlow to LangGraph Converter 🧠➡️🧱
+# 🔄 Langflow to LangGraph Converter
 
-Convert LangFlow JSON exports into fully structured, production-ready LangGraph Python code.
-
----
+Convert Langflow JSON exports to LangGraph Python code.
 
 ## 🚀 Features
 - Parses LangFlow `.json` files
@@ -19,42 +17,67 @@ See [UPDATES.md](UPDATES.md) for recent improvements and changes.
 
 ---
 
-## 🧪 Quickstart (Local Usage)
+## 🚗 Quick Start
+
+### Command Line
 
 ```bash
-# 1. Clone or download this repo
-git clone https://github.com/neuronaut73/langflow2langgraph.git
-cd langflow2langgraph
+# Install
+pip install langflow2langgraph
 
-# 2. Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+# Convert a file
+lf2lg input_flows/simple_chat.json output_graphs/simple_chat.py
 
-# 3. Install dependencies
-pip install -e .
+# Run batch conversion for flat structure
+python batch_convert.py
 
-# 4. Run conversion (example)
-python run_converter.py  # Or use CLI below
+# Run batch conversion for project-based structure
+python batch_convert_projects.py
+
+# Test all converted graphs (flat structure)
+python test_all_graphs.py
+
+# Test all project graphs (project-based structure)
+python test_all_projects.py
 ```
 
----
-
-## 💻 CLI Usage (Optional)
-
-After installation, you can run:
-
-```bash
-lf2lg path/to/langflow.json --output my_graph.py
-```
-
-To enable this, add to `setup.py` or `pyproject.toml`:
+### Python API
 
 ```python
-entry_points={
-    'console_scripts': [
-        'lf2lg=langflow2langgraph.cli:main'
-    ]
-}
+from langflow2langgraph import convert_langflow_to_langgraph
+
+# Convert a file (flat structure)
+convert_langflow_to_langgraph(
+    input_file="input_flows/simple_chat.json",
+    output_file="output_graphs/simple_chat.py",
+    validate=True
+)
+
+# Convert a file (project-based structure)
+convert_langflow_to_langgraph(
+    input_file="projects/simple_chat/input_flows/simple_chat.json",
+    output_file="projects/simple_chat/output_graphs/simple_chat.py",
+    validate=True
+)
+
+# Use the converted graph (flat structure)
+from output_graphs.simple_chat import create_graph
+
+graph = create_graph()
+result = graph.invoke({"input": "Hello, world!"})
+print(result)
+
+# Use the converted graph (project-based structure)
+import sys
+import os
+
+# Add project output_graphs directory to path
+sys.path.append(os.path.join("projects", "simple_chat", "output_graphs"))
+from simple_chat import create_graph
+
+graph = create_graph()
+result = graph.invoke({"input": "Hello, world!"})
+print(result)
 ```
 
 ---
@@ -98,8 +121,6 @@ projects/
 ```
 
 This structure is more scalable and makes it easier to manage multiple projects. Each project can have its own documentation, tests, and version history.
-
----
 
 ## 🛠 Project Structure
 

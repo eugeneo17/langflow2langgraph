@@ -1,0 +1,269 @@
+{
+  "nodes": [
+    {
+      "id": "input_node",
+      "data": {
+        "node_id": "input_node",
+        "class_path": "langflow.custom.nodes.InputNode",
+        "inputs": {},
+        "outputs": {
+          "output": "string"
+        }
+      },
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "type": "inputNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "document_node",
+      "data": {
+        "node_id": "document_node",
+        "class_path": "langchain.document_loaders.text.TextLoader",
+        "inputs": {
+          "file_path": "examples/sample_text.txt"
+        },
+        "outputs": {
+          "documents": "list"
+        }
+      },
+      "position": {
+        "x": 100,
+        "y": 400
+      },
+      "type": "documentNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "text_splitter_node",
+      "data": {
+        "node_id": "text_splitter_node",
+        "class_path": "langchain.text_splitter.CharacterTextSplitter",
+        "inputs": {
+          "chunk_size": 1000,
+          "chunk_overlap": 200
+        },
+        "outputs": {
+          "chunks": "list"
+        }
+      },
+      "position": {
+        "x": 300,
+        "y": 400
+      },
+      "type": "textSplitterNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "embedding_node",
+      "data": {
+        "node_id": "embedding_node",
+        "class_path": "langchain.embeddings.openai.OpenAIEmbeddings",
+        "inputs": {},
+        "outputs": {
+          "embeddings": "list"
+        }
+      },
+      "position": {
+        "x": 500,
+        "y": 400
+      },
+      "type": "embeddingNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "vectorstore_node",
+      "data": {
+        "node_id": "vectorstore_node",
+        "class_path": "langchain.vectorstores.chroma.Chroma",
+        "inputs": {},
+        "outputs": {
+          "vectorstore": "object"
+        }
+      },
+      "position": {
+        "x": 700,
+        "y": 400
+      },
+      "type": "vectorstoreNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "retriever_node",
+      "data": {
+        "node_id": "retriever_node",
+        "class_path": "langchain.vectorstores.base.VectorStoreRetriever",
+        "inputs": {
+          "search_type": "similarity",
+          "k": 3
+        },
+        "outputs": {
+          "documents": "list"
+        }
+      },
+      "position": {
+        "x": 300,
+        "y": 200
+      },
+      "type": "retrieverNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "prompt_node",
+      "data": {
+        "node_id": "prompt_node",
+        "class_path": "langchain.prompts.prompt.PromptTemplate",
+        "inputs": {
+          "template": "Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\nContext:\n{context}\n\nQuestion: {input}\n\nAnswer:"
+        },
+        "outputs": {
+          "prompt": "string"
+        }
+      },
+      "position": {
+        "x": 500,
+        "y": 200
+      },
+      "type": "promptNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "llm_node",
+      "data": {
+        "node_id": "llm_node",
+        "class_path": "langchain.llms.openai.OpenAI",
+        "inputs": {
+          "model_name": "gpt-3.5-turbo-instruct",
+          "temperature": 0.3
+        },
+        "outputs": {
+          "llm_response": "string"
+        }
+      },
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "type": "llmNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "output_node",
+      "data": {
+        "node_id": "output_node",
+        "class_path": "langflow.custom.nodes.OutputNode",
+        "inputs": {},
+        "outputs": {}
+      },
+      "position": {
+        "x": 900,
+        "y": 200
+      },
+      "type": "outputNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "context_formatter",
+      "data": {
+        "node_id": "context_formatter",
+        "class_path": "langflow.custom.utilities.PythonFunction",
+        "inputs": {
+          "code": "def context_formatter(documents):\n    if not documents:\n        return \"\"\n    return \"\\n\\n\".join([doc.page_content for doc in documents])"
+        },
+        "outputs": {
+          "context": "string"
+        }
+      },
+      "position": {
+        "x": 400,
+        "y": 300
+      },
+      "type": "utilityNode",
+      "width": 150,
+      "height": 100
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "sourceHandle": "output",
+      "target": "retriever_node",
+      "targetHandle": "query",
+      "id": "edge1"
+    },
+    {
+      "source": "document_node",
+      "sourceHandle": "documents",
+      "target": "text_splitter_node",
+      "targetHandle": "documents",
+      "id": "edge2"
+    },
+    {
+      "source": "text_splitter_node",
+      "sourceHandle": "chunks",
+      "target": "vectorstore_node",
+      "targetHandle": "documents",
+      "id": "edge3"
+    },
+    {
+      "source": "embedding_node",
+      "sourceHandle": "embeddings",
+      "target": "vectorstore_node",
+      "targetHandle": "embeddings",
+      "id": "edge4"
+    },
+    {
+      "source": "vectorstore_node",
+      "sourceHandle": "vectorstore",
+      "target": "retriever_node",
+      "targetHandle": "vectorstore",
+      "id": "edge5"
+    },
+    {
+      "source": "retriever_node",
+      "sourceHandle": "documents",
+      "target": "context_formatter",
+      "targetHandle": "documents",
+      "id": "edge6"
+    },
+    {
+      "source": "context_formatter",
+      "sourceHandle": "context",
+      "target": "prompt_node",
+      "targetHandle": "context",
+      "id": "edge7"
+    },
+    {
+      "source": "input_node",
+      "sourceHandle": "output",
+      "target": "prompt_node",
+      "targetHandle": "input",
+      "id": "edge8"
+    },
+    {
+      "source": "prompt_node",
+      "sourceHandle": "prompt",
+      "target": "llm_node",
+      "targetHandle": "prompt",
+      "id": "edge9"
+    },
+    {
+      "source": "llm_node",
+      "sourceHandle": "llm_response",
+      "target": "output_node",
+      "targetHandle": "input",
+      "id": "edge10"
+    }
+  ]
+}

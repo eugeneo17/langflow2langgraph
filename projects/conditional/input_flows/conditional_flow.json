@@ -1,0 +1,148 @@
+{
+  "nodes": [
+    {
+      "id": "input_node",
+      "data": {
+        "label": "InputAnalyzer"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def analyze_input(state):\n    if \"input\" in state:\n        text = state[\"input\"].lower()\n        state[\"input_length\"] = len(text)\n        state[\"has_question\"] = \"?\" in text\n        state[\"sentiment\"] = \"positive\" if any(word in text for word in [\"good\", \"great\", \"excellent\", \"happy\"]) else \"negative\" if any(word in text for word in [\"bad\", \"terrible\", \"sad\", \"unhappy\"]) else \"neutral\"\n    return state"
+      }
+    },
+    {
+      "id": "router_node",
+      "data": {
+        "label": "ResponseRouter"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def route_response(state):\n    if \"sentiment\" in state and \"has_question\" in state:\n        if state[\"has_question\"]:\n            return {\"route\": \"question_handler\"}\n        elif state[\"sentiment\"] == \"positive\":\n            return {\"route\": \"positive_handler\"}\n        elif state[\"sentiment\"] == \"negative\":\n            return {\"route\": \"negative_handler\"}\n        else:\n            return {\"route\": \"neutral_handler\"}\n    return {\"route\": \"neutral_handler\"}"
+      }
+    },
+    {
+      "id": "question_handler",
+      "data": {
+        "label": "QuestionHandler"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {
+        "prompt_template": "Answer this question thoughtfully: {input}"
+      }
+    },
+    {
+      "id": "positive_handler",
+      "data": {
+        "label": "PositiveHandler"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {
+        "prompt_template": "Respond enthusiastically to this positive statement: {input}"
+      }
+    },
+    {
+      "id": "negative_handler",
+      "data": {
+        "label": "NegativeHandler"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {
+        "prompt_template": "Provide empathetic response to this negative statement: {input}"
+      }
+    },
+    {
+      "id": "neutral_handler",
+      "data": {
+        "label": "NeutralHandler"
+      },
+      "class_path": "langflow.LLMNode",
+      "inputs": {
+        "prompt_template": "Provide a balanced response to this neutral statement: {input}"
+      }
+    },
+    {
+      "id": "format_output",
+      "data": {
+        "label": "OutputFormatter"
+      },
+      "class_path": "langflow.CustomPythonFunction",
+      "inputs": {
+        "code": "def format_output(state):\n    if \"llm_response\" in state:\n        state[\"output\"] = {\n            \"response\": state[\"llm_response\"],\n            \"metadata\": {\n                \"sentiment\": state.get(\"sentiment\", \"unknown\"),\n                \"was_question\": state.get(\"has_question\", False),\n                \"length\": state.get(\"input_length\", 0)\n            }\n        }\n    return state"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "router_node",
+      "data": {
+        "label": "Analyzed Input"
+      }
+    },
+    {
+      "source": "router_node",
+      "target": "question_handler",
+      "data": {
+        "label": "Question Route",
+        "condition": "route == 'question_handler'"
+      }
+    },
+    {
+      "source": "router_node",
+      "target": "positive_handler",
+      "data": {
+        "label": "Positive Route",
+        "condition": "route == 'positive_handler'"
+      }
+    },
+    {
+      "source": "router_node",
+      "target": "negative_handler",
+      "data": {
+        "label": "Negative Route",
+        "condition": "route == 'negative_handler'"
+      }
+    },
+    {
+      "source": "router_node",
+      "target": "neutral_handler",
+      "data": {
+        "label": "Neutral Route",
+        "condition": "route == 'neutral_handler'"
+      }
+    },
+    {
+      "source": "question_handler",
+      "target": "format_output",
+      "data": {
+        "label": "Format Question Response"
+      }
+    },
+    {
+      "source": "positive_handler",
+      "target": "format_output",
+      "data": {
+        "label": "Format Positive Response"
+      }
+    },
+    {
+      "source": "negative_handler",
+      "target": "format_output",
+      "data": {
+        "label": "Format Negative Response"
+      }
+    },
+    {
+      "source": "neutral_handler",
+      "target": "format_output",
+      "data": {
+        "label": "Format Neutral Response"
+      }
+    }
+  ],
+  "metadata": {
+    "name": "Conditional Response Flow",
+    "description": "A flow that routes responses based on sentiment and question detection",
+    "version": "1.0.0"
+  }
+}

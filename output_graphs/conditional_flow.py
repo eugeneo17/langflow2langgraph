@@ -24,16 +24,16 @@ def create_graph():
     graph.add_node("inputanalyzer", analyze_input)
 
     def route_response(state):
-            if "sentiment" in state and "has_question" in state:
-                if state["has_question"]:
-                    return {"route": "question_handler"}
-                elif state["sentiment"] == "positive":
-                    return {"route": "positive_handler"}
-                elif state["sentiment"] == "negative":
-                    return {"route": "negative_handler"}
-                else:
-                    return {"route": "neutral_handler"}
-            return {"route": "neutral_handler"}
+        if "sentiment" in state and "has_question" in state:
+            if state["has_question"]:
+                return {"route": "question_handler"}
+            elif state["sentiment"] == "positive":
+                return {"route": "positive_handler"}
+            elif state["sentiment"] == "negative":
+                return {"route": "negative_handler"}
+            else:
+                return {"route": "neutral_handler"}
+        return {"route": "neutral_handler"}
     graph.add_node("responserouter", route_response)
 
     def questionhandler(state):
@@ -41,12 +41,12 @@ def create_graph():
         # LLM implementation
         # Model: , Temperature: 0.7
         if "prompt" in state:
-        # In a real implementation, this would call the LLM
-        state["llm_response"] = f"Response to: {state['prompt']}"
+            # In a real implementation, this would call the LLM
+            state["llm_response"] = f"Response to: {state['prompt']}"
         elif "input" in state:
-        state["llm_response"] = f"Response to: {state['input']}"
+            state["llm_response"] = f"Response to: {state['input']}"
         else:
-        state["llm_response"] = "No input provided"
+            state["llm_response"] = "No input provided"
         return state
     graph.add_node("questionhandler", questionhandler)
 
@@ -55,12 +55,12 @@ def create_graph():
         # LLM implementation
         # Model: , Temperature: 0.7
         if "prompt" in state:
-        # In a real implementation, this would call the LLM
-        state["llm_response"] = f"Response to: {state['prompt']}"
+            # In a real implementation, this would call the LLM
+            state["llm_response"] = f"Response to: {state['prompt']}"
         elif "input" in state:
-        state["llm_response"] = f"Response to: {state['input']}"
+            state["llm_response"] = f"Response to: {state['input']}"
         else:
-        state["llm_response"] = "No input provided"
+            state["llm_response"] = "No input provided"
         return state
     graph.add_node("positivehandler", positivehandler)
 
@@ -69,12 +69,12 @@ def create_graph():
         # LLM implementation
         # Model: , Temperature: 0.7
         if "prompt" in state:
-        # In a real implementation, this would call the LLM
-        state["llm_response"] = f"Response to: {state['prompt']}"
+            # In a real implementation, this would call the LLM
+            state["llm_response"] = f"Response to: {state['prompt']}"
         elif "input" in state:
-        state["llm_response"] = f"Response to: {state['input']}"
+            state["llm_response"] = f"Response to: {state['input']}"
         else:
-        state["llm_response"] = "No input provided"
+            state["llm_response"] = "No input provided"
         return state
     graph.add_node("negativehandler", negativehandler)
 
@@ -83,26 +83,26 @@ def create_graph():
         # LLM implementation
         # Model: , Temperature: 0.7
         if "prompt" in state:
-        # In a real implementation, this would call the LLM
-        state["llm_response"] = f"Response to: {state['prompt']}"
+            # In a real implementation, this would call the LLM
+            state["llm_response"] = f"Response to: {state['prompt']}"
         elif "input" in state:
-        state["llm_response"] = f"Response to: {state['input']}"
+            state["llm_response"] = f"Response to: {state['input']}"
         else:
-        state["llm_response"] = "No input provided"
+            state["llm_response"] = "No input provided"
         return state
     graph.add_node("neutralhandler", neutralhandler)
 
     def format_output(state):
-            if "llm_response" in state:
-                state["output"] = {
-                    "response": state["llm_response"],
-                    "metadata": {
-                        "sentiment": state.get("sentiment", "unknown"),
-                        "was_question": state.get("has_question", False),
-                        "length": state.get("input_length", 0)
-                    }
+        if "llm_response" in state:
+            state["output"] = {
+                "response": state["llm_response"],
+                "metadata": {
+                    "sentiment": state.get("sentiment", "unknown"),
+                    "was_question": state.get("has_question", False),
+                    "length": state.get("input_length", 0)
                 }
-            return state
+            }
+        return state
     graph.add_node("outputformatter", format_output)
 
     # --- Edges ---
@@ -111,7 +111,7 @@ def create_graph():
     # Conditional routing based on route
     graph.add_conditional_edges(
         "responserouter",
-        lambda state: state.get('route') == 'neutral_handler',
+        lambda state: state.get('route'),
         {
             "question_handler": "questionhandler",
             "positive_handler": "positivehandler",

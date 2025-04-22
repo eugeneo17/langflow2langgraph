@@ -1,0 +1,42 @@
+LangGraph is a library for building stateful, multi-actor applications with LLMs, built on top of LangChain.
+
+LangGraph provides a way to implement stateful, multi-actor applications with LLMs. It is built on top of LangChain, and is designed to be used with it.
+
+Key features of LangGraph include:
+
+1. State Management: LangGraph provides a way to manage state in your LLM applications. This is important for applications that need to maintain context across multiple interactions.
+
+2. Multi-Actor Support: LangGraph allows you to define multiple actors in your application, each with their own state and behavior. This is useful for applications that need to simulate multiple agents or entities.
+
+3. Graph-Based Flow Control: LangGraph uses a graph-based approach to define the flow of your application. This makes it easy to visualize and reason about the behavior of your application.
+
+4. Integration with LangChain: LangGraph is built on top of LangChain, so you can use all of the features of LangChain in your LangGraph applications.
+
+5. Conditional Routing: LangGraph supports conditional routing, allowing you to define different paths through your application based on the state of the application.
+
+6. Cyclic Flows: LangGraph supports cyclic flows, allowing you to define loops and other complex control structures in your application.
+
+7. Streaming Support: LangGraph supports streaming, allowing you to process data in real-time as it becomes available.
+
+LangGraph is particularly useful for building applications like:
+
+- Multi-agent systems where multiple LLM-based agents interact with each other
+- Applications that need to maintain state across multiple interactions
+- Applications that need to implement complex control flows
+- Applications that need to simulate multiple entities or agents
+
+To get started with LangGraph, you can install it using pip:
+
+```
+pip install langgraph
+```
+
+Then, you can import it in your Python code:
+
+```python
+from langgraph.graph import StateGraph
+```
+
+From there, you can define your graph, add nodes, and define the flow of your application.
+
+For more information, check out the LangGraph documentation at https://langchain-ai.github.io/langgraph/.

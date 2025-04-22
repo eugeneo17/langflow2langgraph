@@ -1,0 +1,209 @@
+{
+  "nodes": [
+    {
+      "id": "input_node",
+      "data": {
+        "node_id": "input_node",
+        "class_path": "langflow.custom.nodes.InputNode",
+        "inputs": {},
+        "outputs": {
+          "output": "string"
+        }
+      },
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "type": "inputNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "llm_node",
+      "data": {
+        "node_id": "llm_node",
+        "class_path": "langchain.chat_models.openai.ChatOpenAI",
+        "inputs": {
+          "model_name": "gpt-3.5-turbo",
+          "temperature": 0.2
+        },
+        "outputs": {
+          "chat_model": "object"
+        }
+      },
+      "position": {
+        "x": 300,
+        "y": 100
+      },
+      "type": "chatModelNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "search_tool",
+      "data": {
+        "node_id": "search_tool",
+        "class_path": "langchain.tools.tavily_search.TavilySearchResults",
+        "inputs": {
+          "max_results": 3
+        },
+        "outputs": {
+          "tool": "object"
+        }
+      },
+      "position": {
+        "x": 300,
+        "y": 300
+      },
+      "type": "toolNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "calculator_tool",
+      "data": {
+        "node_id": "calculator_tool",
+        "class_path": "langchain.tools.python.tool.PythonREPLTool",
+        "inputs": {},
+        "outputs": {
+          "tool": "object"
+        }
+      },
+      "position": {
+        "x": 300,
+        "y": 400
+      },
+      "type": "toolNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "tools_combiner",
+      "data": {
+        "node_id": "tools_combiner",
+        "class_path": "langflow.custom.utilities.PythonFunction",
+        "inputs": {
+          "code": "def combine_tools(tool1, tool2):\n    return [tool1, tool2]"
+        },
+        "outputs": {
+          "tools": "list"
+        }
+      },
+      "position": {
+        "x": 500,
+        "y": 350
+      },
+      "type": "utilityNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "agent_node",
+      "data": {
+        "node_id": "agent_node",
+        "class_path": "langchain.agents.openai_functions_agent.base.OpenAIFunctionsAgent",
+        "inputs": {
+          "system_message": "You are a helpful assistant that can use tools to answer questions."
+        },
+        "outputs": {
+          "agent": "object"
+        }
+      },
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "type": "agentNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "agent_executor",
+      "data": {
+        "node_id": "agent_executor",
+        "class_path": "langchain.agents.agent.AgentExecutor",
+        "inputs": {
+          "verbose": true,
+          "max_iterations": 5
+        },
+        "outputs": {
+          "agent_result": "string"
+        }
+      },
+      "position": {
+        "x": 900,
+        "y": 200
+      },
+      "type": "agentNode",
+      "width": 150,
+      "height": 100
+    },
+    {
+      "id": "output_node",
+      "data": {
+        "node_id": "output_node",
+        "class_path": "langflow.custom.nodes.OutputNode",
+        "inputs": {},
+        "outputs": {}
+      },
+      "position": {
+        "x": 1100,
+        "y": 200
+      },
+      "type": "outputNode",
+      "width": 150,
+      "height": 100
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "sourceHandle": "output",
+      "target": "agent_executor",
+      "targetHandle": "input",
+      "id": "edge1"
+    },
+    {
+      "source": "llm_node",
+      "sourceHandle": "chat_model",
+      "target": "agent_node",
+      "targetHandle": "llm",
+      "id": "edge2"
+    },
+    {
+      "source": "search_tool",
+      "sourceHandle": "tool",
+      "target": "tools_combiner",
+      "targetHandle": "tool1",
+      "id": "edge3"
+    },
+    {
+      "source": "calculator_tool",
+      "sourceHandle": "tool",
+      "target": "tools_combiner",
+      "targetHandle": "tool2",
+      "id": "edge4"
+    },
+    {
+      "source": "tools_combiner",
+      "sourceHandle": "tools",
+      "target": "agent_node",
+      "targetHandle": "tools",
+      "id": "edge5"
+    },
+    {
+      "source": "agent_node",
+      "sourceHandle": "agent",
+      "target": "agent_executor",
+      "targetHandle": "agent",
+      "id": "edge6"
+    },
+    {
+      "source": "agent_executor",
+      "sourceHandle": "agent_result",
+      "target": "output_node",
+      "targetHandle": "input",
+      "id": "edge7"
+    }
+  ]
+}
