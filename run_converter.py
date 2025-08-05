@@ -22,7 +22,9 @@ def main():
     console = Console()
     
     # Path to the sample flow
-    sample_path = os.path.join("examples", "sample_flow.json")
+    sample_input = "drdemo"
+    sample_path = os.path.join("input_flows", f'{sample_input}'+ '.json')
+    #sample_path = os.path.join("input_flows", "agent_example.json")
     
     # Check if the sample file exists
     if not os.path.isfile(sample_path):
@@ -47,7 +49,7 @@ def main():
         console.print(syntax)
         
         # Optionally save the generated code
-        output_path = "generated_graph.py"
+        output_path = os.path.join("output_graphs", f'{sample_input}'+ '.py')
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(generated_code)
         

@@ -42,8 +42,16 @@ def load_langflow_json(json_path: str) -> Dict:
         if not isinstance(data, dict):
             raise LangFlowParsingError("Invalid JSON format: root must be an object")
             
-        if "nodes" not in data:
+        # Handle both formats: direct nodes or nested in data
+        if "nodes" not in data and "data" not in data:
             raise LangFlowParsingError("Invalid LangFlow JSON: 'nodes' field is required")
+        
+        # If nodes are nested in data, extract them
+        if "nodes" not in data and "data" in data:
+            if isinstance(data["data"], dict) and "nodes" in data["data"]:
+                data = data["data"]
+            else:
+                raise LangFlowParsingError("Invalid LangFlow JSON: 'nodes' field is required")
             
         return data
         

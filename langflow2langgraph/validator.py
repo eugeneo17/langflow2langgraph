@@ -371,7 +371,7 @@ def fix_common_issues(code: str) -> str:
         line = sections['edges'][i]
 
         # Fix node names in edges to match function names
-        if 'graph.add_edge' in line or 'graph.add_conditional_edges' in line or 'graph.set_entry_point' in line or 'graph.set_finish_point' in line:
+        if 'graph.add_edge' in line or 'graph.add_conditional_edges' in line:
             # Extract node names from the line
             node_names = re.findall(r'"([^"]+)"', line)
 
@@ -484,12 +484,12 @@ def fix_common_issues(code: str) -> str:
     else:
         # Default entry and finish points - use first and last function names
         if function_names:
-            fixed_code.append(f'    graph.set_entry_point("{function_names[0]}")')
-            fixed_code.append(f'    graph.set_finish_point("{function_names[-1]}")')
+            fixed_code.append(f'    graph.add_edge(START, "{function_names[0]}")')
+            fixed_code.append(f'    graph.add_edge("{function_names[-1]}", END)')
         else:
             # Fallback to default names
-            fixed_code.append('    graph.set_entry_point("process_input")')
-            fixed_code.append('    graph.set_finish_point("format_output")')
+            fixed_code.append('    graph.add_edge(START, "process_input")')
+            fixed_code.append('    graph.add_edge("format_output", END)')
 
     fixed_code.append('')
 

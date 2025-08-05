@@ -13,7 +13,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_input_node", node_input_node)
 
@@ -21,7 +21,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_llm_node", node_llm_node)
 
@@ -29,7 +29,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_search_tool", node_search_tool)
 
@@ -37,7 +37,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_calculator_tool", node_calculator_tool)
 
@@ -45,7 +45,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_tools_combiner", node_tools_combiner)
 
@@ -53,7 +53,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_agent_node", node_agent_node)
 
@@ -61,7 +61,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_agent_executor", node_agent_executor)
 
@@ -69,7 +69,7 @@ def create_graph():
         """Process the state with custom logic."""
         # Custom node implementation
         if "input" in state:
-        state["output"] = f"Custom processing: {state['input']}"
+            state["output"] = f"Custom processing: {state['input']}"
         return state
     graph.add_node("node_output_node", node_output_node)
 

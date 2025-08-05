@@ -319,8 +319,8 @@ def generate_entry_finish_points(node_names: Dict[str, str]) -> List[str]:
     lines = [
         "",
         "    # --- Entry and Finish ---",
-        f"    graph.set_entry_point(\"{node_values[0]}\")",
-        f"    graph.set_finish_point(\"{node_values[-1]}\")"
+        f"    graph.add_edge(START, \"{node_values[0]}\")",
+        f"    graph.add_edge(\"{node_values[-1]}\", END)"
     ]
     
     return lines

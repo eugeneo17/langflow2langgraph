@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: langflow2langgraph
+Version: 0.1.0
+Summary: Convert LangFlow JSON exports into LangGraph Python code
+Home-page: https://github.com/neuronaut73/langflow2langgraph
+Author: Neuronaut
+Author-email: Neuronaut <neuronaut73@users.noreply.github.com>
+License: MIT
+Project-URL: Homepage, https://github.com/neuronaut73/langflow2langgraph
+Project-URL: Bug Tracker, https://github.com/neuronaut73/langflow2langgraph/issues
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: langchain>=0.1.0
+Requires-Dist: rich
+Provides-Extra: openai
+Requires-Dist: openai; extra == "openai"
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python

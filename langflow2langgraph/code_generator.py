@@ -23,8 +23,9 @@ def generate_imports() -> List[str]:
         List of import statement lines
     """
     return [
-        "from langgraph.graph import StateGraph",
+        "from langgraph.graph import StateGraph, START, END",
         "from typing import TypedDict, List, Dict, Any",
+        "from langchain_core.messages import BaseMessage",
         ""
     ]
 
@@ -40,9 +41,25 @@ def generate_state_class(state_fields: Dict[str, str]) -> List[str]:
     """
     lines = ["class GraphState(TypedDict):"]
 
+    # Define comprehensive fields for chat/RAG workflows
+    default_fields = {
+        "input": "str",
+        "question": "str", 
+        "messages": "List[BaseMessage]",
+        "context": "str",
+        "documents": "List[str]",
+        "prompt": "str",
+        "response": "str",
+        "embeddings": "Any",
+        "raw_data": "str",
+        "output": "Any"
+    }
+    
+    # Merge custom fields with defaults
+    all_fields = {**default_fields, **state_fields}
+
     # Add fields with type annotations
-    for field, field_type in state_fields.items():
-        # Convert Python types to TypedDict annotation syntax
+    for field, field_type in all_fields.items():
         if field_type == "str":
             lines.append(f"    {field}: str")
         elif field_type == "int":
@@ -51,6 +68,10 @@ def generate_state_class(state_fields: Dict[str, str]) -> List[str]:
             lines.append(f"    {field}: float")
         elif field_type == "bool":
             lines.append(f"    {field}: bool")
+        elif field_type == "List[BaseMessage]":
+            lines.append(f"    {field}: List[BaseMessage]")
+        elif field_type == "List[str]":
+            lines.append(f"    {field}: List[str]")
         elif field_type == "list":
             lines.append(f"    {field}: List[Any]")
         elif field_type == "dict":

@@ -233,12 +233,72 @@ def generate_custom_node_code(node_name: str, node_data: Dict[str, Any]) -> str:
         # If custom code is provided, use it
         return code_str
 
-    code = f"""def {node_name}(state):
-    \"\"\"Process the state with custom logic.\"\"\"
-    # Custom node implementation
-    if "input" in state:
-        state["output"] = f"Custom processing: {{state['input']}}"
-    return state"""
+    # Generate specific implementations based on node type
+    node_id = node_data.get("id", "")
+    
+    if "chatinput" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Handle chat input from user.\"\"\"
+        if "input" in state:
+            state["messages"] = [state["input"]]
+            state["question"] = state["input"]
+        return state"""
+    elif "chatoutput" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Format chat output for user.\"\"\"
+        if "response" in state:
+            state["output"] = state["response"]
+        elif "messages" in state and state["messages"]:
+            state["output"] = state["messages"][-1]
+        return state"""
+    elif "prompt" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Build prompt from context and question.\"\"\"
+        context = state.get("context", "")
+        question = state.get("question", "")
+        prompt = f"Context: {{context}}\\n\\nQuestion: {{question}}"
+        state["prompt"] = prompt
+        return state"""
+    elif "languagemodel" in node_id.lower() or "llm" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Process with language model.\"\"\"
+        prompt = state.get("prompt", state.get("input", ""))
+        # Simulate LLM response
+        state["response"] = f"AI Response: {{prompt}}"
+        return state"""
+    elif "embedding" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Generate embeddings for text.\"\"\"
+        text = state.get("input", "")
+        # Simulate embedding generation
+        state["embeddings"] = f"embeddings_for_{{text}}"
+        return state"""
+    elif "localdb" in node_id.lower() or "database" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Query local database/vector store.\"\"\"
+        query = state.get("question", state.get("input", ""))
+        # Simulate database query
+        state["documents"] = [f"doc1_for_{{query}}", f"doc2_for_{{query}}"]
+        return state"""
+    elif "parser" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Parse and structure documents.\"\"\"
+        documents = state.get("documents", [])
+        # Simulate parsing
+        state["context"] = " ".join(documents) if documents else ""
+        return state"""
+    elif "confluence" in node_id.lower():
+        code = f"""def {node_name}(state):
+        \"\"\"Fetch data from Confluence.\"\"\"
+        # Simulate Confluence data fetch
+        state["raw_data"] = "confluence_data_content"
+        return state"""
+    else:
+        code = f"""def {node_name}(state):
+        \"\"\"Custom node processing.\"\"\"
+        if "input" in state:
+            state["output"] = f"Processed: {{state['input']}}"
+        return state"""
     return code
 
 def generate_output_parser_node_code(node_name: str, node_data: Dict[str, Any]) -> str:
